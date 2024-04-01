@@ -29,6 +29,8 @@
 
         </asp:Panel>
 
+
+
         <asp:Panel ID="pnlMenuPrincipal" runat="server" Visible="false">
             <div> 
 
@@ -37,7 +39,7 @@
                 SISTEMA DE CONTROL DE VACACIONES.
                 <br />
                 <br />
-                    
+
 
                 <!-- Sección de entrada de texto para el usuario -->
                 <asp:TextBox ID="TextBox3" runat="server" placeholder="Ingrese el parametro."></asp:TextBox>
@@ -68,17 +70,37 @@
                 
         </asp:Panel>
 
+        
 
         <!-- Panel que se abre al seleccionar un empleado de la lista -->
         <asp:Panel ID="pnlSeleccionEmpleado" runat="server" Visible="false">
 
-            HOLAAAAAAAAAAAAAA
+            Empleado seleccionado: 
+            <asp:Label ID="lblInformacionEmpleado" runat="server"></asp:Label> <br />
 
+            Seleccione que acción desea realizar:
+            <br /> <br />
 
+            <!-- Botón para hacer un update -->
+            <asp:Button ID="btnUpdate" runat="server" Text="Actualizar datos." OnClick="btnUpdate_Click" />
+            <br />
+            <br />
+            <!-- Botón para hacer un delete lógico -->
+            <asp:Button ID="btnDelete" runat="server" Text="Eliminar." OnClick="btnDelete_Click" />
+            <br />
+            <br />
+            <!-- Botón para hacer una consulta -->
+            <asp:Button ID="btnConsulta" runat="server" Text="Consultar." OnClick="btnConsulta_Click" />
+
+            <br />
+            <br />
+            <br />
             <!-- Botón para regresar -->
             <asp:Button ID="BtnRegresarSelec" runat="server" Text="Regresar" OnClick="btnRegresarSelec_Click" />
 
         </asp:Panel>
+
+
 
         <!-- Panel que se abre al darle al boton de insertar empleado -->
         <asp:Panel ID="pnlInsercion" runat="server" Visible="false">
@@ -102,6 +124,7 @@
 
             <!-- Espacio donde se selecciona el Puesto -->
             Puesto: 
+            <asp:Label ID="lblNombrePuesto" runat="server"></asp:Label> <br />
 
             <asp:GridView ID="gvdPuestos" runat="server" AutoGenerateColumns="false" OnRowCommand="gvdPuestos_RowCommand">
                 <Columns>
@@ -109,12 +132,6 @@
                     <asp:ButtonField ButtonType="Button" Text="Seleccionar" CommandName="Accion" />
                 </Columns>
             </asp:GridView>
-
-
-            <!-- Text Box del Puesto -->
-            <asp:TextBox ID="TxtPuesto" runat="server" placeholder="Ingrese el puesto."></asp:TextBox>
-            <br />
-            <br />
 
             <!-- Botón para insertar -->
             <asp:Button ID="btnConfirInser" runat="server" Text="Insertar" OnClick="btnConfirInser_Click" />
@@ -125,10 +142,127 @@
             <!-- Botón para regresar -->
             <asp:Button ID="BtnSalirInser" runat="server" Text="Regresar" OnClick="btnRegresarInser_Click" />
 
+        </asp:Panel>
+
+
+
+        <!-- Panel que se abre al darle al boton de realizar un apdate -->
+        <asp:Panel ID="pnlUpdate" runat="server" Visible="false">
+            ¿Qué desea actualizar?
+            <br />
+            <br />
+
+            <!-- Botón del DocIdentidad -->
+            <br />
+            <asp:Button ID="btnDocId" runat="server" Text="El documento de identidad" OnClick="btnDocId_Click" />
+            <br />
+            <br />
+            <!-- Botón para Nombre -->
+            <br />
+            <asp:Button ID="btnUpdNombre" runat="server" Text="El nombre" OnClick="btnUpdNombre_Click" />
+            <br />
+            <br />
+            <!-- Botón para IdPuesto -->
+            <br />
+            <asp:Button ID="btnIdPuesto" runat="server" Text="El ID del puesto" OnClick="btnIdPuesto_Click" />
+
+
+            <br />
+            <br />
+            <br />
+            <!-- Botón para regresar -->
+            <asp:Button ID="btnRegresarUpdate" runat="server" Text="Regresar" OnClick="btnBackUpdate_Click" />
+
+        </asp:Panel>
+
+        
+
+        <!-- Panel de actualizar el docuemento de identidad -->
+        <asp:Panel ID="pnlUpdDocId" runat="server" Visible="false">
+            Ingrese el nuevo valor del documento de identidad: <br />
+            <asp:TextBox ID="txtNuevoDocId" runat="server" placeholder=""></asp:TextBox>
+
+            <br />
+            <!-- Botón para confirmar la actualizacion del cambio de documento de identidad -->
+            <asp:Button ID="btnConfirmDocId" runat="server" Text="Actualizar" OnClick="btnConfirmDocId_Click" />
+
+            <br /> <br /> <br />
+            <!-- Botón para regresar -->
+            <asp:Button ID="btnRegUpdDocId" runat="server" Text="Regresar" OnClick="btnRegUpdDocId_Click" />
 
         </asp:Panel>
 
 
+
+        <!-- Panel de actualizar el nombre -->
+        <asp:Panel ID="pnlUpdNombre" runat="server" Visible="false">
+            Ingrese el nuevo nombre: <br />
+            <asp:TextBox ID="txtNuevoNombre" runat="server" placeholder=""></asp:TextBox>
+
+            <br />
+            <!-- Botón para confirmar la actualizacion del cambio de Nombre -->
+            <asp:Button ID="btnConfirmNombre" runat="server" Text="Actualizar" OnClick="btnConfirmNombre_Click" />
+
+            <br /> <br /> <br />
+            <!-- Botón para regresar -->
+            <asp:Button ID="Button3" runat="server" Text="Regresar" OnClick="btnRegUpdNombre_Click" />
+
+        </asp:Panel>
+
+
+
+        <!-- Panel de actualizar el id puesto -->
+        <asp:Panel ID="pnlUpdIdPuesto" runat="server" Visible="false">
+            Ingrese el ID del nuevo puesto de trabajo: <br />
+            <asp:TextBox ID="txtNuevoIdPuesto" runat="server" placeholder=""></asp:TextBox>
+
+            <br />
+            <!-- Botón para confirmar la actualizacion del cambio de Nombre -->
+            <asp:Button ID="btnConfirmIdPuesto" runat="server" Text="Actualizar" OnClick="btnConfirmIdPuesto_Click" />
+
+            <br /> <br /> <br />
+            <!-- Botón para regresar -->
+            <asp:Button ID="Button4" runat="server" Text="Regresar" OnClick="btnRegUpdIdPuesto_Click" />
+
+        </asp:Panel>
+
+
+
+        <asp:Panel ID="pnlElimEmpleado" runat="server" Visible="false">
+            ¿Está seguro de eliminar el empleado? 
+            <asp:Label ID="lblDocIdEmpleado" runat="server"></asp:Label> <br /> <br /> 
+
+            <!-- Botón para confirmar la actualizacion del cambio de Nombre -->
+            <asp:Button ID="btnConfirmDelete" runat="server" Text="Eliminar" OnClick="btnConfirmDelete_Click" />
+
+            <br />
+            <!-- Botón para regresar -->
+            <asp:Button ID="Button5" runat="server" Text="Regresar" OnClick="btnRegDelete_Click" />
+
+        </asp:Panel>
+
+
+
+        <asp:Panel ID="pnlConsulta" runat="server" Visible="false">
+            Información del empleado: <br /> <br />
+
+            Esta en un PuestoID:
+            <asp:Label ID="lblIdPuesto" runat="server"></asp:Label> <br />
+            Nombre del Puesto: 
+            <asp:Label ID="lblNombredelPuesto" runat="server"></asp:Label> <br />
+
+            Nombre de empleado: <asp:Label ID="lblNombreConsulta" runat="server"></asp:Label> <br />
+            Documento de identidad: <asp:Label ID="lblValDocIdConsulta" runat="server"></asp:Label> <br />
+            
+            <asp:GridView ID="gvdConsulta" runat="server" AutoGenerateColumns="true">
+
+            </asp:GridView>
+
+            <br />
+            <!-- Botón para regresar -->
+            <asp:Button ID="btnRegConsulta" runat="server" Text="Regresar" OnClick="btnRegConsulta_Click" />
+
+        </asp:Panel>
         
 
             <br />
