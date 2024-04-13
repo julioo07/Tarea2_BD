@@ -55,6 +55,9 @@
                         <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
                         <asp:BoundField DataField="ValorDocumentoIdentidad" HeaderText="Documento Identidad" />
                         <asp:ButtonField ButtonType="Button" Text="Seleccionar" CommandName="Accion" />
+                        <asp:ButtonField ButtonType="Button" Text="Listar Movimientos" CommandName="AccionListar" />
+                        <asp:ButtonField ButtonType="Button" Text="Insertar Movimientos" CommandName="AccionInsertar" />
+                    
                     </Columns>
                 </asp:GridView>
 
@@ -130,6 +133,7 @@
                 <Columns>
                     <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
                     <asp:ButtonField ButtonType="Button" Text="Seleccionar" CommandName="Accion" />
+                    
                 </Columns>
             </asp:GridView>
 
@@ -265,10 +269,101 @@
         </asp:Panel>
         
 
-            <br />
-            <br />
+
+
+        <asp:Panel ID="pnlListarMovimientos" runat="server" Visible="false">
+            <div> 
+
+                <br/>
+
+                LISTA DE MOVIMIENTOS
+                <br />
+                <br />
+                Empleado seleccionado: 
+                <asp:Label ID="lblNombreEmpleado" runat="server"></asp:Label> <br />
+                Cédula:
+                <asp:Label ID="lblDocumentoIdentidad" runat="server"></asp:Label> <br />
+                Saldo de Vacaciones
+                <asp:Label ID="lblDiasVacaciones" runat="server"></asp:Label> <br />
 
         
+                <!-- Lista de los movimientos -->
+                <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="false" OnRowCommand="GridView1_RowCommand" CssClass="styled-grid">
+                    <Columns>
+                        <asp:BoundField DataField="Fecha" HeaderText="Fecha" ItemStyle-Width="100px" />
+                        <asp:BoundField DataField="NombreTipoMovimiento" HeaderText="Nombre del Movimiento" ItemStyle-Width="200px" />
+                        <asp:BoundField DataField="Monto" HeaderText="Monto" ItemStyle-Width="100px" />
+                        <asp:BoundField DataField="NuevoSaldo" HeaderText="Nuevo Saldo" ItemStyle-Width="100px" />
+                        <asp:BoundField DataField="NombreUser" HeaderText="Registrado por" ItemStyle-Width="150px" />
+                        <asp:BoundField DataField="PostIntIP" HeaderText="IP" ItemStyle-Width="150px" />
+                        <asp:BoundField DataField="PostTime" HeaderText="Tiempo" ItemStyle-Width="150px" />
+                    </Columns>
+                    <HeaderStyle CssClass="grid-header" />
+                </asp:GridView>
+
+                <br />
+                <br />
+        
+                <!-- Botón para regresar -->
+                <asp:Button ID="Button7" runat="server" Text="Regresar" OnClick="btnRegresarInser_Click" />
+
+            </div>
+
+        </asp:Panel>
+    
+
+
+         <asp:Panel ID="pnlInsertarMovimientos" runat="server" Visible="false">
+             <div> 
+
+                 <br/>
+
+                 INSERTAR MOVIMIENTOS
+                 <br />
+                 <br />
+                 Empleado seleccionado: 
+                 <asp:Label ID="lblNombreEmpleado2" runat="server"></asp:Label> <br />
+                 Cédula:
+                 <asp:Label ID="lblDocumentoIdentidad2" runat="server"></asp:Label> <br />
+                 Saldo de Vacaciones
+                 <asp:Label ID="lblDiasVacaciones2" runat="server"></asp:Label> <br />
+
+
+                <!-- Espacio donde se selecciona el Puesto -->
+                Movimiento: 
+                <asp:Label ID="lblNombreMovimiento" runat="server"></asp:Label> <br />
+
+                <asp:GridView ID="gvdMovimientos" runat="server" AutoGenerateColumns="false" OnRowCommand="gvdMovimientos_RowCommand">
+                    <Columns>
+                        <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
+                        <asp:ButtonField ButtonType="Button" Text="Seleccionar" CommandName="Accion" />
+        
+                    </Columns>
+                </asp:GridView>
+
+
+                <!-- Text Box del Monto -->
+                Ingrese el Monto:
+                <br />
+                <asp:TextBox ID="TextBox1" runat="server" placeholder=""></asp:TextBox>
+                <br />
+                <br />
+ 
+                 <!-- Botón para insertar -->
+                <asp:Button ID="Button1" runat="server" Text="Insertar" OnClick="btnConfirInser_Click" />
+                <br />
+                <br />
+
+                <!-- Botón para regresar -->
+                <asp:Button ID="Button6" runat="server" Text="Regresar" OnClick="btnRegresarInser_Click" />
+
+             </div>
+         </asp:Panel>
+
+
+
+            <br />
+            <br />       
 
 
     </main>

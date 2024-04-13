@@ -57,6 +57,8 @@ namespace Tarea2BD
         protected void btnRegresarInser_Click(object sender, EventArgs e)
         {
             pnlInsercion.Visible = false;
+            pnlListarMovimientos.Visible = false;
+            pnlInsertarMovimientos.Visible = false;
             pnlMenuPrincipal.Visible=true;
         }
 
@@ -456,8 +458,50 @@ namespace Tarea2BD
                                 GridView1.DataBind();
                             }
                         }
+
                     }
                 }
+            }
+        }
+
+
+        public void MostrarMovimientos(String DocIdEmpleado)
+        {
+            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["connDB"].ConnectionString))
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "SPSMovimiento"; // SP que usaremos
+                cmd.Connection = conn;
+
+                //cmd.Parameters.AddWithValue("@Entrada", DocIdEmpleado);
+
+                // Agrega el parámetro de salida
+                cmd.Parameters.AddWithValue("@Entrada", DocIdEmpleado);
+
+                conn.Open();
+               // cmd.ExecuteNonQuery();  // Se ejecuta el SP
+
+                // El código de resultado es exitoso, ahora obten los datos y asigna al GridView
+                using (SqlCommand cmdSelect = new SqlCommand("SELECT [Fecha], TM.[Nombre] AS NombreTipoMovimiento, [Monto], [NuevoSaldo], U.[Username] AS NombreUser, [PostIntIP], M.[PostTime] FROM[Tarea2BD].[dbo].[Movimiento] M INNER JOIN [Tarea2BD].[dbo].[TipoMovimiento] TM ON M.[IdTipoMovimiento] = TM.[Id] INNER JOIN [Tarea2BD].[dbo].[Usuario] U ON M.[IdPostByUser] = U.[Id] INNER JOIN [Tarea2BD].[dbo].[Empleado] E ON M.[IdEmpleado] = E.[Id] WHERE CAST(E.[ValorDocumentoIdentidad] AS varchar(64)) LIKE '%' + @Entrada + '%' ORDER BY M.[Fecha]", conn))
+                {
+                    // ahora si se use el Execute Reader
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            // Si hay filas, enlaza el resultado al GridView
+                            GridView2.DataSource = reader;
+                            GridView2.DataBind();
+                        }
+                        else
+                        {
+                            // Si ningun empleado coincide con el filtro que se puso
+                            Response.Write("No se encontraron resultados.");
+                        }
+                    }
+                }
+                
             }
         }
 
@@ -486,6 +530,42 @@ namespace Tarea2BD
                 lblNombreConsulta.Text = nombreEmpleado;
                 lblValDocIdConsulta.Text = DocIdEmpleado;
             }
+            if (e.CommandName == "AccionListar")
+            {
+                int index = Convert.ToInt32(e.CommandArgument);
+
+                pnlMenuPrincipal.Visible = false;
+                pnlListarMovimientos.Visible = true;
+
+                GridViewRow selectedRow = GridView1.Rows[index];
+
+                string nombreEmpleado = selectedRow.Cells[1].Text; // Obtener el nombre del empleado
+                string DocIdEmpleado = selectedRow.Cells[2].Text; // Obtener el nombre del empleado
+
+                // Mostrar el nombre del empleado en el panel de información
+                lblNombreEmpleado.Text = nombreEmpleado;
+                lblDocumentoIdentidad.Text = DocIdEmpleado;
+                MostrarMovimientos(DocIdEmpleado);
+            }
+            if (e.CommandName == "AccionInsertar")
+            {
+                int index = Convert.ToInt32(e.CommandArgument);
+
+                pnlMenuPrincipal.Visible = false;
+                pnlInsertarMovimientos.Visible = true;
+
+                GridViewRow selectedRow = GridView1.Rows[index];
+
+                string nombreEmpleado = selectedRow.Cells[1].Text; // Obtener el nombre del empleado
+                string DocIdEmpleado = selectedRow.Cells[2].Text; // Obtener el nombre del empleado
+
+                // Mostrar el nombre del empleado en el panel de información
+                lblNombreEmpleado2.Text = nombreEmpleado;
+                lblDocumentoIdentidad2.Text = DocIdEmpleado;
+                MostrarTMovimientos();
+
+            }
+
         }
 
         protected void gvdPuestos_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -500,6 +580,21 @@ namespace Tarea2BD
 
                 // Mostrar el nombre del empleado en el panel de información
                 lblNombrePuesto.Text = nombrePuesto;
+            }
+        }
+
+        protected void gvdMovimientos_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "Accion")
+            {
+                int index = Convert.ToInt32(e.CommandArgument);
+
+                GridViewRow selectedRow = gvdMovimientos.Rows[index];
+
+                string nombreMovimiento = selectedRow.Cells[0].Text; // Obtener el nombre del puesto
+
+                // Mostrar el nombre del empleado en el panel de información
+                lblNombreMovimiento.Text = nombreMovimiento;
             }
         }
 
@@ -582,6 +677,9 @@ namespace Tarea2BD
             }
             return nombrePuesto;
         }
+
+
+
 
 
 
@@ -679,6 +777,45 @@ namespace Tarea2BD
             }
         }
 
+        public void MostrarTMovimientos()
+        {
+            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["connDB"].ConnectionString))
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "SPSTMovimiento"; // SP que usaremos
+                cmd.Connection = conn;
+
+                // Agrega el parámetro de salida
+                SqlParameter outParameter = new SqlParameter("@OutResulTCode", SqlDbType.Int);
+                outParameter.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(outParameter);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();  // Se ejecuta el SP
+
+                // Se ve el codigo que se obtuvo
+                int resultado = (int)cmd.Parameters["@OutResulTCode"].Value;
+                if (resultado == 0)
+                {
+                    // El código de resultado es exitoso, ahora obten los datos y asigna al GridView
+                    using (SqlCommand cmdSelect = new SqlCommand("SELECT [Nombre] FROM [Tarea2BD].[dbo].[TipoMovimiento] ORDER BY Nombre", conn))
+                    {
+                        // ahora si se use el Execute Reader
+                        using (SqlDataReader reader = cmdSelect.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                gvdPuestos.DataSource = reader;
+                                gvdPuestos.DataBind();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
         protected void Consulta(int ValorDocumentoIdentidad)
         {
             using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["connDB"].ConnectionString))
@@ -719,11 +856,5 @@ namespace Tarea2BD
                 }
             }
         }
-
-
-
-
-
-
     }
 }
