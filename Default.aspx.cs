@@ -45,8 +45,9 @@ namespace Tarea2BD
         {
             pnlPaginaInicio.Visible = true;
             pnlMenuPrincipal.Visible=false;
+            InsertarEnBitacora(4, " ");
         }
-
+     
         protected void btnInsert_Click(object sender, EventArgs e)
         {
             pnlInsercion.Visible = true;
@@ -93,6 +94,14 @@ namespace Tarea2BD
         // boton de confirmar actualizacion del doc id
         protected void btnConfirmDocId_Click(Object sender, EventArgs e)
         {
+            if (!int.TryParse(txtNuevoDocId.Text.Trim(), out int valorDoc))
+            {
+                // Manejar errores según el código de resultado
+                String Descripcion = ReturnDescError(50010);
+                Response.Write("Error: " + Descripcion);
+                return; // Salir de la función si el Documento de Identidad no es numérico
+            }
+
             // FUNCION DE ACTUALIZAR EL DOC ID
             string nombreEmpleado = lblInformacionEmpleado.Text;
 
@@ -180,7 +189,8 @@ namespace Tarea2BD
                         else
                         {
                             // Manejar errores según el código de resultado
-                            Response.Write("Error al modificar el nombre. Código de error: " + resultado);
+                            String Descripcion = ReturnDescError(resultado);
+                            Response.Write("Error: " + Descripcion);
                         }
                     }
                     catch (Exception ex)
@@ -243,7 +253,8 @@ namespace Tarea2BD
                         else
                         {
                             // Manejar errores según el código de resultado
-                            Response.Write("Error al modificar el ID Puesto. Código de error: " + resultado);
+                            String Descripcion = ReturnDescError(resultado);
+                            Response.Write("Error: " + Descripcion);
                         }
                     }
                     catch (Exception ex)
@@ -264,9 +275,6 @@ namespace Tarea2BD
             pnlUpdate.Visible = true;
             pnlUpdIdPuesto.Visible = false;
         }
-
-
-
 
         // Cuando selecciona eliminar el empleado
         protected void btnDelete_Click(object sender, EventArgs e)
@@ -311,7 +319,8 @@ namespace Tarea2BD
                             else
                             {
                                 // Manejar errores según el código de resultado
-                                Response.Write("Error al eliminar el empleado. Código de error: " + resultado);
+                                String Descripcion = ReturnDescError(resultado);
+                                Response.Write("Error: " + Descripcion);
                             }
                         }
                         catch (Exception ex)
@@ -333,8 +342,6 @@ namespace Tarea2BD
             pnlElimEmpleado.Visible = false;
             pnlSeleccionEmpleado.Visible = true;
         }
-
-
 
 
         // Cuando selecciona Realizarle una consulta al trabajador
@@ -359,8 +366,6 @@ namespace Tarea2BD
             pnlConsulta.Visible = false;
             pnlSeleccionEmpleado.Visible = true;
         }
-
-
 
 
         protected void btnFiltrar_Click(object sender, EventArgs e)
@@ -463,7 +468,6 @@ namespace Tarea2BD
                 }
             }
         }
-
 
         public void MostrarMovimientos(String DocIdEmpleado)
         {
@@ -642,6 +646,7 @@ namespace Tarea2BD
             return idPuesto;
         }
 
+       
         protected string ReturnNombrePuesto(int idPuesto)
         {
             string nombrePuesto = ""; // inicializacion del string donde va el nomrbe
@@ -679,12 +684,60 @@ namespace Tarea2BD
         }
 
 
+        protected string ReturnDescError(int Codigo)
+        {
+            string Descripcion = ""; // inicializacion del string donde va el nomrbe
 
+            string connectionString = ConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
 
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand("SPReturnDescError", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add("@Codigo", SqlDbType.Int).Value = Codigo;
+
+                    // Definir el parámetro de salida
+                    SqlParameter outParameter = new SqlParameter("@Desc", SqlDbType.VarChar, 64);
+                    outParameter.Direction = ParameterDirection.Output;
+                    command.Parameters.Add(outParameter);
+                   
+                    try
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+
+                        // Obtener el valor de salida
+                        Descripcion = command.Parameters["@Desc"].Value.ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Manejar excepciones, si es necesario
+                        Console.WriteLine("Error al ejecutar el procedimiento almacenado: " + ex.Message);
+                    }
+                }
+            }
+            return Descripcion;
+        }
 
 
         protected void btnConfirInser_Click(object sender, EventArgs e)
         {
+            
+            if (string.IsNullOrEmpty(TxtNombre.Text.Trim()))
+            {
+                Response.Write("Ingrese el nombre del empleado");
+                return;
+            }
+            if (!int.TryParse(TxtDocId.Text.Trim(), out int valorDoc))
+            {
+                // Manejar errores según el código de resultado
+                String Descripcion = ReturnDescError(50010);
+                Response.Write("Error: " + Descripcion);
+                return; // Salir de la función si el Documento de Identidad no es numérico
+            }
+
+            Console.WriteLine("Error al ejecutar el procedimiento almacenado");
             // int idPuesto = ReturnIdPuesto(TxtPuesto.Text.Trim()); // Obtener el ID del puesto
             int idPuesto = ReturnIdPuesto(lblNombrePuesto.Text);
 
@@ -700,30 +753,34 @@ namespace Tarea2BD
                     command.Parameters.AddWithValue("@IdPuesto", idPuesto);
                     command.Parameters.AddWithValue("@Nombre", TxtNombre.Text.Trim());
                     command.Parameters.AddWithValue("@ValorDocumentoIdentidad", TxtDocId.Text.Trim());
+                    string Desc = string.Join(", ", lblNombrePuesto.Text, TxtNombre.Text, TxtDocId.Text);
 
                     // Agregar parámetro de salida
                     SqlParameter outParameter = new SqlParameter("@OutResulTCode", SqlDbType.Int);
                     outParameter.Direction = ParameterDirection.Output;
                     command.Parameters.Add(outParameter);
 
+
                     try
                     {
                         connection.Open();
                         command.ExecuteNonQuery();
-
+                        
                         // Obtener el valor de retorno
                         int resultado = (int)command.Parameters["@OutResulTCode"].Value;
-
+                        
                         // Manejar el resultado según sea necesario
                         if (resultado == 0)
                         {
                             // La inserción fue exitosa
                             Response.Write("El empleado se inserto correctamente.");
+                            InsertarEnBitacora(5, Desc);
                         }
                         else
                         {
-                            // Ocurrió un error durante la inserción
-                            Response.Write("Error al insertar empleado");
+                            // Manejar errores según el código de resultado
+                            String Descripcion = ReturnDescError(resultado);
+                            Response.Write("Error: " + Descripcion);
                         }
                     }
                     catch (Exception ex)
@@ -734,8 +791,138 @@ namespace Tarea2BD
                 }
             }
             pnlInsercion.Visible = false;
-            pnlMenuPrincipal.Visible=true;
+            pnlMenuPrincipal.Visible = true;
             MostrarEmpleados();
+        }
+
+        protected void btnConfirInserMovimiento_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtMonto.Text.Trim()))
+            {
+                Response.Write("Ingrese el nombre del empleado");
+                return;
+            }
+
+            if (!int.TryParse(txtMonto.Text.Trim(), out int valorDoc))
+            {
+                Response.Write("El Documento de Identidad debe ser numérico.");
+                return; // Salir de la función si el Documento de Identidad no es numérico
+            }
+
+            //Ip del cliente
+            string serverIP = HttpContext.Current.Request.ServerVariables["LOCAL_ADDR"];
+
+            // Establecer la conexión a la base de datos
+            string connectionString = ConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+
+                SqlCommand command = new SqlCommand("SPIMovimiento", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                // Agregar parámetros
+                    
+                command.Parameters.AddWithValue("@NombreEmpleado", lblNombreEmpleado2.Text.Trim());
+                command.Parameters.AddWithValue("@NombreTipoMovimiento", lblNombreMovimiento.Text.Trim());
+                command.Parameters.AddWithValue("@Monto", txtMonto.Text.Trim());
+                command.Parameters.AddWithValue("@NombreUser", txtUsuario.Text.Trim());
+
+                // Agregar la dirección IP como parámetro
+                command.Parameters.AddWithValue("@PostIntIP", serverIP);
+
+                // Agregar parámetro de salida
+                SqlParameter outParameter = new SqlParameter("@OutResulTCode", SqlDbType.Int);
+                outParameter.Direction = ParameterDirection.Output;
+                command.Parameters.Add(outParameter);
+                    
+                try
+                {
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                        
+                    // Obtener el valor de retorno
+                    int resultado = (int)command.Parameters["@OutResulTCode"].Value;
+
+                    // Manejar el resultado según sea necesario
+                    if (resultado == 0)
+                    {
+                        // La inserción fue exitosa
+                        Response.Write("El Movimiento se inserto correctamente.");
+                    }
+                    else
+                    {
+                        // Manejar errores según el código de resultado
+                        String Descripcion = ReturnDescError(resultado);
+                        Response.Write("Error: " + Descripcion);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Manejar excepciones, si es necesario
+                    Console.WriteLine("Error al ejecutar el procedimiento almacenado: " + ex.Message);
+                }
+                
+            }
+            pnlInsertarMovimientos.Visible = false;
+            pnlMenuPrincipal.Visible = true;
+
+        }
+
+
+        protected void InsertarEnBitacora(int idNombre, String Descripcion)
+        {
+            //Ip del cliente
+            string serverIP = HttpContext.Current.Request.ServerVariables["LOCAL_ADDR"];
+
+            // Establecer la conexión a la base de datos
+            string connectionString = ConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+
+                SqlCommand command = new SqlCommand("SPIEvento", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                // Agregar parámetros
+
+                command.Parameters.AddWithValue("@NombreEvento", idNombre);
+                command.Parameters.Add("@NombrePuesto", SqlDbType.VarChar, 64).Value = Descripcion;
+                command.Parameters.AddWithValue("@NombreUser", txtUsuario.Text.Trim());
+
+                // Agregar la dirección IP como parámetro
+                command.Parameters.AddWithValue("@PostIntIP", serverIP);
+
+                // Agregar parámetro de salida
+                SqlParameter outParameter = new SqlParameter("@OutResulTCode", SqlDbType.Int);
+                outParameter.Direction = ParameterDirection.Output;
+                command.Parameters.Add(outParameter);
+
+                try
+                {
+                    connection.Open();
+                    command.ExecuteNonQuery();
+
+                    // Obtener el valor de retorno
+                    int resultado = (int)command.Parameters["@OutResulTCode"].Value;
+
+                    // Manejar el resultado según sea necesario
+                    if (resultado == 0)
+                    {
+                        // La inserción fue exitosa
+                        Response.Write("El Evento se inserto correctamente.");
+                    }
+                    else
+                    {
+                        // Manejar errores según el código de resultado
+                        String Desc = ReturnDescError(resultado);
+                        Response.Write("Error: " + Desc);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Manejar excepciones, si es necesario
+                    Console.WriteLine("Error al ejecutar el procedimiento almacenado: " + ex.Message);
+                }
+            }
         }
 
 
@@ -806,8 +993,8 @@ namespace Tarea2BD
                         {
                             if (reader.HasRows)
                             {
-                                gvdPuestos.DataSource = reader;
-                                gvdPuestos.DataBind();
+                                gvdMovimientos.DataSource = reader;
+                                gvdMovimientos.DataBind();
                             }
                         }
                     }

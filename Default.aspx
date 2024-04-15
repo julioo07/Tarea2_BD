@@ -65,7 +65,7 @@
                 <br />
 
                 <!-- Botón para insertar un nuevo empleado -->
-                <asp:Button ID="btnInsert" runat="server" Text="Insertar nuevo empleado." OnClick="btnInsert_Click" />
+                <asp:Button ID="btnInsert" runat="server" Text="Insertar nuevo empleado." OnClick="btnInsert_Click" />        
                 <!-- Botón para salir -->
                 <asp:Button ID="btnSalir" runat="server" Text="Salir" OnClick="btnSalir_Click" />
 
@@ -327,9 +327,10 @@
                  <asp:Label ID="lblDocumentoIdentidad2" runat="server"></asp:Label> <br />
                  Saldo de Vacaciones
                  <asp:Label ID="lblDiasVacaciones2" runat="server"></asp:Label> <br />
+                 <br />
+             
 
-
-                <!-- Espacio donde se selecciona el Puesto -->
+                <!-- Espacio donde se selecciona el Movimiento -->
                 Movimiento: 
                 <asp:Label ID="lblNombreMovimiento" runat="server"></asp:Label> <br />
 
@@ -340,17 +341,18 @@
         
                     </Columns>
                 </asp:GridView>
-
+                <br />
+             
 
                 <!-- Text Box del Monto -->
                 Ingrese el Monto:
                 <br />
-                <asp:TextBox ID="TextBox1" runat="server" placeholder=""></asp:TextBox>
+                <asp:TextBox ID="txtMonto" runat="server" placeholder=""></asp:TextBox>
                 <br />
                 <br />
  
                  <!-- Botón para insertar -->
-                <asp:Button ID="Button1" runat="server" Text="Insertar" OnClick="btnConfirInser_Click" />
+                <asp:Button ID="Button1" runat="server" Text="Insertar" OnClick="btnConfirInserMovimiento_Click" />
                 <br />
                 <br />
 
