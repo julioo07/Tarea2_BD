@@ -82,6 +82,11 @@
 
             Empleado seleccionado: 
             <asp:Label ID="lblInformacionEmpleado" runat="server"></asp:Label> <br />
+            Cédula:
+            <asp:Label ID="lblIdEmpleado" runat="server"></asp:Label> <br />
+            ID Puesto:
+            <asp:Label ID="lblIdPuestoActual" runat="server"></asp:Label> <br />
+
 
             Seleccione que acción desea realizar:
             <br /> <br />
@@ -134,7 +139,7 @@
             <asp:GridView ID="gvdPuestos" runat="server" AutoGenerateColumns="false" OnRowCommand="gvdPuestos_RowCommand">
                 <Columns>
                     <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
-                    <asp:ButtonField ButtonType="Button" Text="Seleccionar" CommandName="Accion" />
+                    <asp:ButtonField ButtonType="Button" Text="Seleccionar" CommandName="AccionPuesto" />
                     
                 </Columns>
             </asp:GridView>
