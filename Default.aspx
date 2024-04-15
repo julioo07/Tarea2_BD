@@ -25,6 +25,8 @@
             <asp:Button ID="btnIniciarSesion" runat="server" Text="Iniciar Sesión" OnClick="btnIniciarSesion_Click" />
             <br />
             <br />
+            <asp:Label ID="lblTries" runat="server">0 </asp:Label> 
+            intentos fallidos.
 
 
         </asp:Panel>

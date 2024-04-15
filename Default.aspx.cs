@@ -15,6 +15,7 @@ namespace Tarea2BD
 {
     public partial class _Default : Page
     {
+        DateTime horaActual = DateTime.Now;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -27,18 +28,53 @@ namespace Tarea2BD
         {
             // Llamar al método para verificar las credenciales
             bool credencialesCorrectas = VerificarCredenciales();
-
             // Si las credenciales son correctas, mostrar el panel del menú principal
-            if (credencialesCorrectas)
+            if (credencialesCorrectas && Int32.Parse(lblTries.Text) <= 4)
             {
                 pnlPaginaInicio.Visible = false;
                 pnlMenuPrincipal.Visible=true;
+                lblTries.Text = "0";
+            }
+            else if (Int32.Parse(lblTries.Text) < 4)
+            {
+                // Si las credenciales son incorrectas, mostrar un mensaje de error o realizar otra acción
+                // si el text box del nombre de usuario esta vacío
+                if (string.IsNullOrEmpty(txtUsuario.Text))
+                {
+                    int tries = Int32.Parse(lblTries.Text) + 1;
+                    lblTries.Text = tries.ToString();
+                    Response.Write("Ingrese un usuario, " + (5-tries) + " intentos restantes.");
+                }
+                // si el text box del password de usuario esta vacío
+                else if (string.IsNullOrEmpty(txtPassword.Text))
+                {
+                    int tries = Int32.Parse(lblTries.Text) + 1;
+                    lblTries.Text = tries.ToString();
+                    Response.Write("Ingrese un password, " + (5-tries) + " intentos restantes.");
+                }
+                // si las credenciales que se metieron son incorrectas
+                else
+                {
+                    int tries = Int32.Parse(lblTries.Text) + 1;
+                    lblTries.Text = tries.ToString();
+                    Response.Write("Credenciales incorrectas, " + (5-tries) + " intentos restantes.");
+                }
+                
             }
             else
             {
-                // Si las credenciales son incorrectas, mostrar un mensaje de error o realizar otra acción
-                Response.Write("Credenciales incorrectas. Por favor, inténtelo de nuevo.");
+                if ((DateTime.Now - horaActual).TotalMinutes < 30)
+                {
+                    lblTries.Text = "5";
+                    Response.Write("Cantidad de intentos maxima alcanzada, ");
+                    BloqueSistema();
+                }
             }
+        }
+
+        protected void BloqueSistema()
+        {
+            Response.Write("Sistema bloqueado.");
         }
 
         protected void btnSalir_Click(object sender, EventArgs e)
