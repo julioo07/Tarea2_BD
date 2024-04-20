@@ -143,18 +143,8 @@ namespace Tarea2BD
         // boton de confirmar actualizacion del doc id
         protected void btnConfirmDocId_Click(Object sender, EventArgs e)
         {
-            if (!int.TryParse(txtNuevoDocId.Text.Trim(), out int valorDoc))
-            {
-                // Manejar errores según el código de resultado
-                String Descripcion = ReturnDescError(50010);
-                Response.Write("Error: " + Descripcion);
-                return; // Salir de la función si el Documento de Identidad no es numérico
-            }
-
             // FUNCION DE ACTUALIZAR EL DOC ID
             string nombreEmpleado = lblInformacionEmpleado.Text;
-            string IdAntigua = lblIdEmpleado.Text;
-            string IdPuestoAntigua = lblIdPuestoActual.Text;
 
             string connectionString = ConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -180,21 +170,11 @@ namespace Tarea2BD
                         {
                             // La operación se realizó correctamente
                             Response.Write("El valor del documento de identidad se modifico correctamente");
-                            String DescEvento = "ID antiguo: " + IdAntigua + " ID nuevo: " + txtNuevoDocId.Text.Trim() +
-                                                " Nombre antiguo: " + nombreEmpleado + " Nombre nuevo: " + nombreEmpleado +
-                                                " ID Puesto antiguo: " + IdPuestoAntigua + " ID  nuevo: " + IdPuestoAntigua;
-                            InsertarEnBitacora(8, DescEvento);
                         }
                         else
                         {
-                            String Descripcion = ReturnDescError(resultado);
-                            Response.Write("Error: " + Descripcion);
-                            String DescEvento = "Error: " + Descripcion + 
-                                                " ID antiguo: " + IdAntigua + "  ID nuevo: " + txtNuevoDocId.Text.Trim() +
-                                                " Nombre antiguo: " + nombreEmpleado + " Nombre nuevo: " + nombreEmpleado +
-                                                " ID Puesto antiguo: " + IdPuestoAntigua + " ID  nuevo: " + IdPuestoAntigua;
-                            InsertarEnBitacora(7, DescEvento);
-
+                            // Manejar errores según el código de resultado
+                            Response.Write("Error al modificar el documento de identidad. Código de error: " + resultado);
                         }
                     }
                     catch (Exception ex)
@@ -221,8 +201,6 @@ namespace Tarea2BD
         {
             // FUNCION DE ACTUALIZAR EL NOMBRE
             string nombreEmpleado = lblInformacionEmpleado.Text;
-            string IdAntigua = lblIdEmpleado.Text;
-            string IdPuestoAntigua = lblIdPuestoActual.Text;
 
             string connectionString = ConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -247,22 +225,12 @@ namespace Tarea2BD
                         if (resultado == 0)
                         {
                             // La operación se realizó correctamente
-                            Response.Write("El valor del documento de identidad se modifico correctamente");
-                            String DescEvento = "ID antiguo: " + IdAntigua + " ID nuevo: " + IdAntigua +
-                                                " Nombre antiguo: " + nombreEmpleado + " Nombre nuevo: " + txtNuevoNombre.Text.Trim() +
-                                                " ID Puesto antiguo: " + IdPuestoAntigua + " ID  nuevo: " + IdPuestoAntigua;
-                            InsertarEnBitacora(8, DescEvento);
+                            Response.Write("El valor del nombre se modifico correctamente");
                         }
                         else
                         {
                             // Manejar errores según el código de resultado
-                            String Descripcion = ReturnDescError(resultado);
-                            Response.Write("Error: " + Descripcion);
-                            String DescEvento = "Error: " + Descripcion + 
-                                                " ID antiguo: " + IdAntigua + " ID nuevo: " + IdAntigua +
-                                                " Nombre antiguo: " + nombreEmpleado + " Nombre nuevo: " + txtNuevoNombre.Text.Trim() +
-                                                " ID Puesto antiguo: " + IdPuestoAntigua + " ID  nuevo: " + IdPuestoAntigua;
-                            InsertarEnBitacora(7, DescEvento);
+                            Response.Write("Error al modificar el nombre. Código de error: " + resultado);
                         }
                     }
                     catch (Exception ex)
@@ -296,8 +264,6 @@ namespace Tarea2BD
         {
             // FUNCION DE ACTUALIZAR EL ID PUESTO
             string nombreEmpleado = lblInformacionEmpleado.Text;
-            string IdAntigua = lblIdEmpleado.Text;
-            string IdPuestoAntigua = lblIdPuestoActual.Text;
 
             string connectionString = ConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -321,22 +287,13 @@ namespace Tarea2BD
 
                         if (resultado == 0)
                         {
-                            Response.Write("El valor del documento de identidad se modifico correctamente");
-                            String DescEvento = "ID antiguo: " + IdAntigua + " ID nuevo: " + IdAntigua +
-                                                " Nombre antiguo: " + nombreEmpleado + " Nombre nuevo: " + nombreEmpleado +
-                                                " ID Puesto antiguo: " + IdPuestoAntigua + " ID  nuevo: " + txtNuevoIdPuesto.Text.Trim();
-                            InsertarEnBitacora(8, DescEvento);
+                            // La operación se realizó correctamente
+                            Response.Write("El valor del ID Puesto se modifico correctamente");
                         }
                         else
                         {
                             // Manejar errores según el código de resultado
-                            String Descripcion = ReturnDescError(resultado);
-                            Response.Write("Error: " + Descripcion);
-                            String DescEvento = "Error: " + Descripcion + 
-                                                " ID antiguo: " + IdAntigua + " ID nuevo: " + IdAntigua +
-                                                " Nombre antiguo: " + nombreEmpleado + " Nombre nuevo: " + nombreEmpleado +
-                                                " ID Puesto antiguo: " + IdPuestoAntigua + " ID  nuevo: " + txtNuevoIdPuesto.Text.Trim();
-                            InsertarEnBitacora(7, DescEvento);
+                            Response.Write("Error al modificar el ID Puesto. Código de error: " + resultado);
                         }
                     }
                     catch (Exception ex)
@@ -490,19 +447,11 @@ namespace Tarea2BD
                 // Ejecuta el SP y obtiene los resultados en un SqlDataReader
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
-                    int resultado = (int)cmd.Parameters["@OutResulTCode"].Value;
+                    // Aquí se elimina la línea que intenta acceder al parámetro de salida
+                    // int resultado = (int)cmd.Parameters["@OutResulTCode"].Value;
+
                     if (reader.HasRows)
                     {
-                        if (resultado == 1)
-                        {
-                            String DescEvento = "Valor del Filtro: " + TextBox3.Text.Trim();
-                            InsertarEnBitacora(11, DescEvento);
-                        }
-                        else
-                        {
-                            String DescEvento = "Valor del Filtro: " + TextBox3.Text.Trim();
-                            InsertarEnBitacora(12, DescEvento);
-                        }
                         // Si hay filas, enlaza el resultado al GridView
                         GridView1.DataSource = reader;
                         GridView1.DataBind();
@@ -513,8 +462,23 @@ namespace Tarea2BD
                         Response.Write("No se encontraron resultados.");
                     }
                 }
+
+                // Después de ejecutar el comando, puedes obtener el valor del parámetro de salida
+                int resultado = (int)cmd.Parameters["@OutResulTCode"].Value;
+                // Hacer algo con el valor de resultado si es necesario
+                if (resultado == 1)
+                {
+                    String DescEvento = "Valor del Filtro: " + TextBox3.Text.Trim();
+                    InsertarEnBitacora(11, DescEvento);
+                }
+                else
+                {
+                    String DescEvento = "Valor del Filtro: " + TextBox3.Text.Trim();
+                    InsertarEnBitacora(12, DescEvento);
+                }
             }
         }
+
 
 
         // Método para llamar al procedimiento almacenado que verifica el usuario :)
@@ -843,21 +807,18 @@ namespace Tarea2BD
 
         protected void btnConfirInser_Click(object sender, EventArgs e)
         {
-            
             if (string.IsNullOrEmpty(TxtNombre.Text.Trim()))
             {
                 Response.Write("Ingrese el nombre del empleado");
                 return;
             }
+
             if (!int.TryParse(TxtDocId.Text.Trim(), out int valorDoc))
             {
-                // Manejar errores según el código de resultado
-                String Descripcion = ReturnDescError(50010);
-                Response.Write("Error: " + Descripcion);
+                Response.Write("El Documento de Identidad debe ser numérico.");
                 return; // Salir de la función si el Documento de Identidad no es numérico
             }
 
-            Console.WriteLine("Error al ejecutar el procedimiento almacenado");
             // int idPuesto = ReturnIdPuesto(TxtPuesto.Text.Trim()); // Obtener el ID del puesto
             int idPuesto = ReturnIdPuesto(lblNombrePuesto.Text);
 
@@ -873,36 +834,30 @@ namespace Tarea2BD
                     command.Parameters.AddWithValue("@IdPuesto", idPuesto);
                     command.Parameters.AddWithValue("@Nombre", TxtNombre.Text.Trim());
                     command.Parameters.AddWithValue("@ValorDocumentoIdentidad", TxtDocId.Text.Trim());
-                    string Desc = string.Join(", ", lblNombrePuesto.Text.Trim(), TxtNombre.Text.Trim(), TxtDocId.Text.Trim());
 
                     // Agregar parámetro de salida
                     SqlParameter outParameter = new SqlParameter("@OutResulTCode", SqlDbType.Int);
                     outParameter.Direction = ParameterDirection.Output;
                     command.Parameters.Add(outParameter);
 
-
                     try
                     {
                         connection.Open();
                         command.ExecuteNonQuery();
-                        
+
                         // Obtener el valor de retorno
                         int resultado = (int)command.Parameters["@OutResulTCode"].Value;
-                        
+
                         // Manejar el resultado según sea necesario
                         if (resultado == 0)
                         {
                             // La inserción fue exitosa
                             Response.Write("El empleado se inserto correctamente.");
-                            InsertarEnBitacora(6, "Informacion: " + Desc);
                         }
                         else
                         {
-                            // Manejar errores según el código de resultado
-                            String Descripcion = ReturnDescError(resultado);
-                            Response.Write("Error: " + Descripcion);
-                            String DescEvento = "Error: " + Descripcion + " Informacion: " + Desc;
-                            InsertarEnBitacora(5, DescEvento);
+                            // Ocurrió un error durante la inserción
+                            Response.Write("Error al insertar empleado");
                         }
                     }
                     catch (Exception ex)
@@ -913,7 +868,7 @@ namespace Tarea2BD
                 }
             }
             pnlInsercion.Visible = false;
-            pnlMenuPrincipal.Visible = true;
+            pnlMenuPrincipal.Visible=true;
             MostrarEmpleados();
         }
 
