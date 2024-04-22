@@ -143,8 +143,18 @@ namespace Tarea2BD
         // boton de confirmar actualizacion del doc id
         protected void btnConfirmDocId_Click(Object sender, EventArgs e)
         {
+            if (!int.TryParse(txtNuevoDocId.Text.Trim(), out int valorDoc))
+            {
+                // Manejar errores según el código de resultado
+                String Descripcion = ReturnDescError(50010);
+                Response.Write("Error: " + Descripcion);
+                return; // Salir de la función si el Documento de Identidad no es numérico
+            }
+
             // FUNCION DE ACTUALIZAR EL DOC ID
             string nombreEmpleado = lblInformacionEmpleado.Text;
+            string IdAntigua = lblIdEmpleado.Text;
+            string IdPuestoAntigua = lblIdPuestoActual.Text;
 
             string connectionString = ConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -169,12 +179,23 @@ namespace Tarea2BD
                         if (resultado == 0)
                         {
                             // La operación se realizó correctamente
+                            lblIdEmpleado.Text = txtNuevoDocId.Text.Trim();
                             Response.Write("El valor del documento de identidad se modifico correctamente");
+                            String DescEvento = "ID antiguo: " + IdAntigua + " ID nuevo: " + txtNuevoDocId.Text.Trim() +
+                                                " Nombre antiguo: " + nombreEmpleado + " Nombre nuevo: " + nombreEmpleado +
+                                                " ID Puesto antiguo: " + IdPuestoAntigua + " ID  nuevo: " + IdPuestoAntigua;
+                            InsertarEnBitacora(8, DescEvento);
                         }
                         else
                         {
-                            // Manejar errores según el código de resultado
-                            Response.Write("Error al modificar el documento de identidad. Código de error: " + resultado);
+                            String Descripcion = ReturnDescError(resultado);
+                            Response.Write("Error: " + Descripcion);
+                            String DescEvento = "Error: " + Descripcion +
+                                                " ID antiguo: " + IdAntigua + "  ID nuevo: " + txtNuevoDocId.Text.Trim() +
+                                                " Nombre antiguo: " + nombreEmpleado + " Nombre nuevo: " + nombreEmpleado +
+                                                " ID Puesto antiguo: " + IdPuestoAntigua + " ID  nuevo: " + IdPuestoAntigua;
+                            InsertarEnBitacora(7, DescEvento);
+
                         }
                     }
                     catch (Exception ex)
@@ -184,7 +205,7 @@ namespace Tarea2BD
                     }
                 }
             }
-            MostrarPuestos();
+            MostrarEmpleados();
             pnlUpdate.Visible = true;
             pnlUpdDocId.Visible = false;
         }
@@ -201,6 +222,8 @@ namespace Tarea2BD
         {
             // FUNCION DE ACTUALIZAR EL NOMBRE
             string nombreEmpleado = lblInformacionEmpleado.Text;
+            string IdAntigua = lblIdEmpleado.Text;
+            string IdPuestoAntigua = lblIdPuestoActual.Text;
 
             string connectionString = ConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -225,12 +248,23 @@ namespace Tarea2BD
                         if (resultado == 0)
                         {
                             // La operación se realizó correctamente
+                            lblInformacionEmpleado.Text = txtNuevoNombre.Text.Trim();
                             Response.Write("El valor del nombre se modifico correctamente");
+                            String DescEvento = "ID antiguo: " + IdAntigua + " ID nuevo: " + IdAntigua +
+                                                " Nombre antiguo: " + nombreEmpleado + " Nombre nuevo: " + txtNuevoNombre.Text.Trim() +
+                                                " ID Puesto antiguo: " + IdPuestoAntigua + " ID  nuevo: " + IdPuestoAntigua;
+                            InsertarEnBitacora(8, DescEvento);
                         }
                         else
                         {
                             // Manejar errores según el código de resultado
-                            Response.Write("Error al modificar el nombre. Código de error: " + resultado);
+                            String Descripcion = ReturnDescError(resultado);
+                            Response.Write("Error: " + Descripcion);
+                            String DescEvento = "Error: " + Descripcion +
+                                                " ID antiguo: " + IdAntigua + " ID nuevo: " + IdAntigua +
+                                                " Nombre antiguo: " + nombreEmpleado + " Nombre nuevo: " + txtNuevoNombre.Text.Trim() +
+                                                " ID Puesto antiguo: " + IdPuestoAntigua + " ID  nuevo: " + IdPuestoAntigua;
+                            InsertarEnBitacora(7, DescEvento);
                         }
                     }
                     catch (Exception ex)
@@ -264,6 +298,8 @@ namespace Tarea2BD
         {
             // FUNCION DE ACTUALIZAR EL ID PUESTO
             string nombreEmpleado = lblInformacionEmpleado.Text;
+            string IdAntigua = lblIdEmpleado.Text;
+            string IdPuestoAntigua = lblIdPuestoActual.Text;
 
             string connectionString = ConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -287,13 +323,23 @@ namespace Tarea2BD
 
                         if (resultado == 0)
                         {
-                            // La operación se realizó correctamente
-                            Response.Write("El valor del ID Puesto se modifico correctamente");
+                            lblIdPuestoActual.Text = txtNuevoIdPuesto.Text.Trim();
+                            Response.Write("El valor del ID puesto se modifico correctamente");
+                            String DescEvento = "ID antiguo: " + IdAntigua + " ID nuevo: " + IdAntigua +
+                                                " Nombre antiguo: " + nombreEmpleado + " Nombre nuevo: " + nombreEmpleado +
+                                                " ID Puesto antiguo: " + IdPuestoAntigua + " ID  nuevo: " + txtNuevoIdPuesto.Text.Trim();
+                            InsertarEnBitacora(8, DescEvento);
                         }
                         else
                         {
                             // Manejar errores según el código de resultado
-                            Response.Write("Error al modificar el ID Puesto. Código de error: " + resultado);
+                            String Descripcion = ReturnDescError(resultado);
+                            Response.Write("Error: " + Descripcion);
+                            String DescEvento = "Error: " + Descripcion +
+                                                " ID antiguo: " + IdAntigua + " ID nuevo: " + IdAntigua +
+                                                " Nombre antiguo: " + nombreEmpleado + " Nombre nuevo: " + nombreEmpleado +
+                                                " ID Puesto antiguo: " + IdPuestoAntigua + " ID  nuevo: " + txtNuevoIdPuesto.Text.Trim();
+                            InsertarEnBitacora(7, DescEvento);
                         }
                     }
                     catch (Exception ex)
@@ -480,7 +526,6 @@ namespace Tarea2BD
         }
 
 
-
         // Método para llamar al procedimiento almacenado que verifica el usuario :)
         private int VerificarCredenciales()
         {
@@ -582,12 +627,54 @@ namespace Tarea2BD
                         {
                             // Si ningun empleado coincide con el filtro que se puso
                             Response.Write("No se encontraron resultados.");
+                            GridView2.DataSource = reader;
+                            GridView2.DataBind();
                         }
                     }
                 }
                 
             }
         }
+
+
+        protected int ReturnSaldo(string Nombre)
+        {
+            int idPuesto = -5; // Valor predeterminado en caso de que no se pueda obtener el id
+
+            string connectionString = ConfigurationManager.ConnectionStrings["connDB"].ConnectionString;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand("SPReturnSaldo", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Agregar parámetros de entrada y salida
+                    command.Parameters.Add("@NombrePuesto", SqlDbType.VarChar, 64).Value = Nombre;
+
+                    // Definir el parámetro de salida
+                    SqlParameter outParameter = new SqlParameter("@Saldo", SqlDbType.Int);
+                    outParameter.Direction = ParameterDirection.Output;
+                    command.Parameters.Add(outParameter);
+
+                    try
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+
+                        // Obtener el valor de salida
+                        idPuesto = (int)command.Parameters["@Saldo"].Value;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Manejar excepciones, si es necesario
+                        Console.WriteLine("Error al ejecutar el procedimiento almacenado: " + ex.Message);
+                    }
+                }
+            }
+            return idPuesto;
+        }
+
 
         // Seleccion de empleado en la lista
         protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -604,6 +691,7 @@ namespace Tarea2BD
                 string IdPuesto = selectedRow.Cells[0].Text;
                 string nombreEmpleado = selectedRow.Cells[1].Text; // Obtener el nombre del empleado
                 string DocIdEmpleado = selectedRow.Cells[2].Text; // Obtener el nombre del empleado
+                int saldo = ReturnSaldo(nombreEmpleado);
 
                 // Mostrar el nombre del empleado en el panel de información
                 lblIdPuesto.Text = IdPuesto;
@@ -613,7 +701,7 @@ namespace Tarea2BD
                 // Los label del panel de consulta
                 lblNombreConsulta.Text = nombreEmpleado;
                 lblValDocIdConsulta.Text = DocIdEmpleado;
-
+                lblDiasVacaciones.Text = saldo.ToString();
                 lblIdEmpleado.Text = DocIdEmpleado;
                 lblIdPuestoActual.Text = IdPuesto;
             }
@@ -628,10 +716,12 @@ namespace Tarea2BD
 
                 string nombreEmpleado = selectedRow.Cells[1].Text; // Obtener el nombre del empleado
                 string DocIdEmpleado = selectedRow.Cells[2].Text; // Obtener el nombre del empleado
+                int saldo = ReturnSaldo(nombreEmpleado);
 
                 // Mostrar el nombre del empleado en el panel de información
                 lblNombreEmpleado.Text = nombreEmpleado;
                 lblDocumentoIdentidad.Text = DocIdEmpleado;
+                lblDiasVacaciones.Text = saldo.ToString();
                 MostrarMovimientos(DocIdEmpleado);
             }
             if (e.CommandName == "AccionInsertar")
@@ -645,10 +735,12 @@ namespace Tarea2BD
 
                 string nombreEmpleado = selectedRow.Cells[1].Text; // Obtener el nombre del empleado
                 string DocIdEmpleado = selectedRow.Cells[2].Text; // Obtener el nombre del empleado
+                int saldo = ReturnSaldo(nombreEmpleado);
 
                 // Mostrar el nombre del empleado en el panel de información
                 lblNombreEmpleado2.Text = nombreEmpleado;
                 lblDocumentoIdentidad2.Text = DocIdEmpleado;
+                lblDiasVacaciones2.Text = saldo.ToString();
                 MostrarTMovimientos();
                 InsertarEnBitacora(15, "Consulta de Movimientos");
 
@@ -807,18 +899,21 @@ namespace Tarea2BD
 
         protected void btnConfirInser_Click(object sender, EventArgs e)
         {
+
             if (string.IsNullOrEmpty(TxtNombre.Text.Trim()))
             {
                 Response.Write("Ingrese el nombre del empleado");
                 return;
             }
-
             if (!int.TryParse(TxtDocId.Text.Trim(), out int valorDoc))
             {
-                Response.Write("El Documento de Identidad debe ser numérico.");
+                // Manejar errores según el código de resultado
+                String Descripcion = ReturnDescError(50010);
+                Response.Write("Error: " + Descripcion);
                 return; // Salir de la función si el Documento de Identidad no es numérico
             }
 
+            Console.WriteLine("Error al ejecutar el procedimiento almacenado");
             // int idPuesto = ReturnIdPuesto(TxtPuesto.Text.Trim()); // Obtener el ID del puesto
             int idPuesto = ReturnIdPuesto(lblNombrePuesto.Text);
 
@@ -834,11 +929,13 @@ namespace Tarea2BD
                     command.Parameters.AddWithValue("@IdPuesto", idPuesto);
                     command.Parameters.AddWithValue("@Nombre", TxtNombre.Text.Trim());
                     command.Parameters.AddWithValue("@ValorDocumentoIdentidad", TxtDocId.Text.Trim());
+                    string Desc = string.Join(", ", lblNombrePuesto.Text.Trim(), TxtNombre.Text.Trim(), TxtDocId.Text.Trim());
 
                     // Agregar parámetro de salida
                     SqlParameter outParameter = new SqlParameter("@OutResulTCode", SqlDbType.Int);
                     outParameter.Direction = ParameterDirection.Output;
                     command.Parameters.Add(outParameter);
+
 
                     try
                     {
@@ -853,11 +950,15 @@ namespace Tarea2BD
                         {
                             // La inserción fue exitosa
                             Response.Write("El empleado se inserto correctamente.");
+                            InsertarEnBitacora(6, "Informacion: " + Desc);
                         }
                         else
                         {
-                            // Ocurrió un error durante la inserción
-                            Response.Write("Error al insertar empleado");
+                            // Manejar errores según el código de resultado
+                            String Descripcion = ReturnDescError(resultado);
+                            Response.Write("Error: " + Descripcion);
+                            String DescEvento = "Error: " + Descripcion + " Informacion: " + Desc;
+                            InsertarEnBitacora(5, DescEvento);
                         }
                     }
                     catch (Exception ex)
@@ -868,7 +969,7 @@ namespace Tarea2BD
                 }
             }
             pnlInsercion.Visible = false;
-            pnlMenuPrincipal.Visible=true;
+            pnlMenuPrincipal.Visible = true;
             MostrarEmpleados();
         }
 

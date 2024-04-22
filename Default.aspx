@@ -290,7 +290,7 @@
                 <asp:Label ID="lblNombreEmpleado" runat="server"></asp:Label> <br />
                 Cédula:
                 <asp:Label ID="lblDocumentoIdentidad" runat="server"></asp:Label> <br />
-                Saldo de Vacaciones
+                Saldo de Vacaciones:
                 <asp:Label ID="lblDiasVacaciones" runat="server"></asp:Label> <br />
 
         
@@ -332,7 +332,7 @@
                  <asp:Label ID="lblNombreEmpleado2" runat="server"></asp:Label> <br />
                  Cédula:
                  <asp:Label ID="lblDocumentoIdentidad2" runat="server"></asp:Label> <br />
-                 Saldo de Vacaciones
+                 Saldo de Vacaciones:
                  <asp:Label ID="lblDiasVacaciones2" runat="server"></asp:Label> <br />
                  <br />
              
